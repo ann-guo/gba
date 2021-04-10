@@ -1,0 +1,11 @@
+{
+    "files.associations": {
+        "startscreen.h": "c",
+        "dino1.h": "c",
+        "frame1.h": "c",
+        "frame2.h": "c",
+        "string.h": "c",
+        "mylib.h": "c",
+        "dreamimg.h": "c"
+    }
+}
