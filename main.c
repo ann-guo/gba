@@ -38,6 +38,7 @@
 #include "images/background.h"
 #include "images/zombie.h"
 #include "images/background2.h"
+
 #include "images/winScreen.h"
 
 u32 previousButtons;
@@ -48,6 +49,7 @@ u32 currentButtons;
 enum gba_state {
   START,
   PLAY,
+  PLAY2,
   WIN,
   LOSE,
 };
@@ -80,7 +82,7 @@ int main(void) {
   while (1) {
     waitForVBlank();
     currentButtons = BUTTONS; // Load the current state of the buttons
-
+    
     /* TODO: */
     // Manipulate the state machine below as needed //
     // NOTE: Call waitForVBlank() before you draw
@@ -89,14 +91,17 @@ int main(void) {
     
     switch (state) {
       case START:
+      colorMeSurprised(20, COLOR(31, 0, 0));
       
-      
+      //drawFullScreenImageDMA(startScreen);
       if(KEY_JUST_PRESSED(BUTTON_START, currentButtons, previousButtons)) {
+        count = 0;
         score=10;
         obj.row = 80;
         obj.col = 150;
         dream.row = 75;
         dream.col = 40;
+        //drawImageDMA(120,80,240,160, background);
         drawFullScreenImageDMA(background);
         
         state = PLAY;
@@ -105,12 +110,12 @@ int main(void) {
         // state = ?
         break;
       case PLAY:
-        
-        
+
         undrawImage3(dream.row, dream.col, 19, 38, dreamImg);
         undrawImage3(obj.row, obj.col, 19,38, zombie);
+        drawFullScreenImageDMA(background);
         if(KEY_HELD(BUTTON_SELECT, currentButtons, previousButtons)) { //BACKSPACE to go back to start any time.
-          drawFullScreenImageDMA(startScreen);
+          //drawFullScreenImageDMA(startScreen);
           
           state = START;
         }
@@ -132,13 +137,13 @@ int main(void) {
         
         
         
+        
         if(KEY_HELD(BUTTON_UP, currentButtons, previousButtons) || jumping == 1) {    
           jump(&dream);  
         
         }
-        drawString(20, 147, "health:", BLACK);
-        sprintf(string, "%d", score);
-        drawString(20, 190, string, BLACK);
+        
+        
         if(detectCollision(&dream, &obj) == -1) {
           score--;
           
@@ -149,17 +154,34 @@ int main(void) {
             state = LOSE;
           }
         } 
+      
         
-        
+        //moveZombie(&obj);
         move();
         
        
        if (240 < dream.col && dream.col < 260) { //go to next screen
+          if(count == 1) {
+            //
+            state = WIN;
+          } else {
+          obj.row = 80;
+          obj.col = 150;
+          dream.row = 75;
+          dream.col = 40;
           waitForVBlank();
-          drawFullScreenImageDMA(winScreen);
-          state = WIN;
+          undrawImage3(obj.row, obj.col, 19,38, zombie);
+          //drawFullScreenImageDMA(background2);
+          //drawImageDMA(120, 80, 240, 160, background2);
+          state = PLAY2;      
+          }
+          
+          
         }
-        
+        drawFullScreenImageDMA(background);
+        drawString(20, 147, "health:", BLACK);
+        sprintf(string, "%d", score);
+        drawString(20, 190, string, BLACK);
         
         drawImageDMA(dream.row, dream.col, 19, 38, dreamImg);
         
@@ -168,14 +190,81 @@ int main(void) {
 
         // state = ?
         break;
-     
+      case PLAY2:
+      //waitForVBlank();
+        count = 1;
+        
+      
+        undrawImage3(dream.row, dream.col, 19, 38, dreamImg);
+        undrawImage3(obj.row, obj.col, 19,38, zombie);
+        drawFullScreenImageDMA(background2);
+        if(KEY_HELD(BUTTON_SELECT, currentButtons, previousButtons)) { //BACKSPACE to go back to start any time.
+          drawFullScreenImageDMA(startScreen);
+          
+          state = START;
+        }
+       
+        
+        
+        if(KEY_HELD(BUTTON_UP, currentButtons, previousButtons) || jumping == 1) {    
+          jump(&dream);  
+        
+        }
+        drawString(20, 147, "health:", BLACK);
+        sprintf(string, "%d", score);
+        drawString(20, 190, string, BLACK);
+        
+        if(detectCollision(&dream, &obj) == -1) {
+          score--;
+          
+          sprintf(string, "%d", score);
+          drawString(20, 190, string, BLACK);
+          
+          if(score==0) {
+            state = LOSE;
+          }
+        } 
+      
+        
+        //moveZombie(&obj);
+        move();
+        
+       
+       if (240 < dream.col && dream.col < 260) { //go to next screen
+          count = 1;
+          obj.row = 80;
+          obj.col = 150;
+          dream.row = 75;
+          dream.col = 40;
+          drawFullScreenImageDMA(background);
+          //drawFullScreenImageDMA(background2);
+          //drawImageDMA(120, 80, 240, 160, winScreen);
+          state = PLAY;
+        }
+        
+        drawFullScreenImageDMA(background2);
+        drawString(20, 147, "health:", BLACK);
+        sprintf(string, "%d", score);
+        drawString(20, 190, string, BLACK);
+        
+        drawImageDMA(dream.row, dream.col, 19, 38, dreamImg);
+        
+        drawImageDMA(obj.row, obj.col, 19, 38, zombie);
+        
+        delay(2);
+
+
+        break;
       case WIN:
+        //waitForVBlank();
+        drawFullScreenImageDMA(winScreen);
         drawCenteredString(WIDTH/2-20, HEIGHT/2, 50, 50, "You Win. Press Start to try again.", WHITE); //start = enter
         char string3[5];
         sprintf(string3, "%d", score);
         drawString(20, 147, "health:", BLACK);
         drawString(20, 190, string, BLACK);
         if(KEY_JUST_PRESSED(BUTTON_START, currentButtons, previousButtons)) {
+          count = 0;
           obj.row = 80;
           obj.col = 150;
           dream.row = 75;
@@ -189,6 +278,7 @@ int main(void) {
         // state = ?
         break;
       case LOSE:
+        waitForVBlank();
         fillScreenDMA(BLACK);
         drawCenteredString(WIDTH/2-20, HEIGHT/2, 50, 50, "You Lose. Press Start to try again.", WHITE);
     

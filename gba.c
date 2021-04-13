@@ -51,6 +51,13 @@ void drawRectDMA(int row, int col, int width, int height, volatile u16 color) {
     }
   }
 }
+void colorMeSurprised(int col, unsigned short surprised) {
+  for(int c=0; c<col; c++)  {
+    for(int r = 0; r < HEIGHT;r++) {
+      setPixel(r, col + c,surprised);
+    }
+  }
+}
 
 void drawFullScreenImageDMA(const u16 *image) {
   // TODO: IMPLEMENT

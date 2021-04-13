@@ -145,6 +145,7 @@ void drawString(int row, int col, char *str, u16 color);
 void drawCenteredString(int row, int col, int width, int height, char *str, u16 color);
 void undrawImage3(int r, int c, int width, int height, const u16 *image);
 void delay(int n);
+void colorMeSurprised(int col, unsigned short surprised);
 /* Contains the pixels of each character from a 6x8 font */
 // This is in the font.c file. You can replace the font if you want.
 extern const unsigned char fontdata_6x8[12288];

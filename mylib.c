@@ -9,7 +9,7 @@
 
 #include "images/garbage.h"
 
-#include "images/background2.h"
+#include "images/zombie.h"
 
 
 
@@ -19,6 +19,7 @@ int jumping;
 int currentspeedY;
 int gravity = -1;
 volatile int score;
+int count;
 
 
 void newFrame(const u16 *image) {
@@ -67,16 +68,12 @@ double sqrt(double x) {
     }
     return ldexp(y, exp/2); // multiply answer by 2^(exp/2)
 }
-/*int detectCollision2(void) {
-    if(dream.col < 139 || dream.col >=170) {
-        double dx = abs(dream.col - obj.col);
-        double dy = abs(dream.row - obj.row);
-        double distance =pow(((dx*dx) + (dy*dy)) , (1/2));
-        if(distance <= 19) { //collision
-            //return -1;
-        } 
-    }
-}*/
+void moveZombie(ZOMBIE *zomb) {
+  undrawImage3(obj.row, obj.col, 19, 38, zombie);
+  zomb-> col -= 2;
+  drawImageDMA(obj.row, obj.col, 19, 38, zombie);
+    
+}
 
 
 void jump(DREAM *dreamc) {
@@ -125,11 +122,6 @@ void move(void) {
         jump(&dream);
         dream.col -=5;
     }
-}
-void nextRoom(void) {
-  if (dream.col == 230) {
-    drawFullScreenImageDMA(background2);
-  }
 }
 
 

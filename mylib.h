@@ -9,6 +9,7 @@ extern DINO dino;
 extern ZOMBIE obj;
 extern DREAM dream;
 extern volatile int score;
+extern int count;
 
 
 
@@ -20,5 +21,6 @@ void jump(DREAM *dinoObj);
 void move(void);
 double sqrt(double x);
 void nextRoom(void);
+void moveZombie(ZOMBIE *zom);
 
 #endif
